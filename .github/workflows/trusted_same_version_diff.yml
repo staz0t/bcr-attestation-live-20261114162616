@@ -1,0 +1,33 @@
+name: Trusted same-version diff control
+on:
+  pull_request:
+    branches: [main]
+    paths: ['modules/**']
+permissions:
+  contents: read
+jobs:
+  trusted_same_version_diff:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out protected base
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: trusted
+          persist-credentials: false
+      - name: Check out exact pull-request head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          path: attacked
+          persist-credentials: false
+      - name: Expose the same-version attestation deletion
+        run: |
+          set -euo pipefail
+          target="modules/jemalloc/5.3.0-bcr.4/attestations.json"
+          test -f "trusted/$target"
+          test ! -e "attacked/$target"
+          rc=0
+          git --no-pager diff --no-index --no-prefix -- "trusted/$target" /dev/null || rc=$?
+          test "$rc" -eq 1

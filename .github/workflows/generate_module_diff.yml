@@ -1,0 +1,20 @@
+name: Generate module diff
+on:
+  pull_request:
+    branches: [main]
+    paths: ['modules/**']
+permissions:
+  contents: read
+jobs:
+  generate_module_diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          persist-credentials: false
+      - name: Generate the official adjacent-version diff
+        uses: bazelbuild/continuous-integration/actions/bcr-pr-reviewer@d1c4eb730271188868ab8d934df3a1507c0b07eb
+        with:
+          action-type: diff_module

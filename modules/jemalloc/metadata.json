@@ -1,0 +1,26 @@
+{
+    "homepage": "https://jemalloc.net/",
+    "maintainers": [
+        {
+            "email": "26545664+staz0t@users.noreply.github.com",
+            "github": "staz0t",
+            "github_user_id": 26545664,
+            "name": "Controlled victim and jemalloc module maintainer"
+        }
+    ],
+    "repository": [
+        "github:sallustfire/jemalloc",
+        "github:jemalloc/jemalloc"
+    ],
+    "versions": [
+        "5.3.0-bcr.3",
+        "5.3.0-bcr.4",
+        "5.3.0-bcr.alpha.1",
+        "5.3.0-bcr.alpha.2",
+        "5.3.0-bcr.alpha.3",
+        "5.3.0-bcr.alpha.4",
+        "5.3.0-bcr.alpha.5",
+        "5.3.0.bcr.5"
+    ],
+    "yanked_versions": {}
+}

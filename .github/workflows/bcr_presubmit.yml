@@ -1,0 +1,36 @@
+name: Current BCR presubmit
+on:
+  pull_request:
+    types: [labeled]
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  bcr-presubmit:
+    if: github.event.label.name == 'presubmit-auto-run'
+    name: bcr-presubmit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the exact pull-request head without credentials
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          path: registry
+          persist-credentials: false
+      - name: Check out the current BCR validator
+        uses: actions/checkout@v4
+        with:
+          repository: bazelbuild/bazel-central-registry
+          ref: 5449a7683977378f1da885c2c4b254dbaf995d04
+          path: validator-source
+          sparse-checkout: tools
+          persist-credentials: false
+      - name: Reproduce the current labeled BCR validation gate
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check 'requests==2.34.2' 'PyYAML==6.0.3' 'zstandard==0.25.0'
+          export PYTHONPATH="$GITHUB_WORKSPACE/validator-source/tools"
+          python3 "$GITHUB_WORKSPACE/validator-source/tools/bcr_validation.py"             --registry "$GITHUB_WORKSPACE/registry"             --check=jemalloc@5.3.0-bcr.4             --skip_validation=presubmit_yml
