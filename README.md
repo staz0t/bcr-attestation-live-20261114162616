@@ -1,1 +1,1 @@
-Controlled BCR attestation proof fixtur.
+Controlled BCR attestation proof fixture.
